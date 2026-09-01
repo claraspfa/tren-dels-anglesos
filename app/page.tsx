@@ -1,7 +1,7 @@
 "use client";
 /* eslint-disable @next/next/no-img-element -- Local heritage assets and Leaflet marker HTML require native image elements. */
 
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type { Dispatch, ReactNode, SetStateAction } from "react";
 import type { Map as LeafletMap } from "leaflet";
 import "leaflet/dist/leaflet.css";
@@ -241,17 +241,80 @@ export default function Home() {
 
   useEffect(() => { document.documentElement.lang = lang === "va" ? "ca-valencia" : lang; }, [lang]);
 
+  const syncModalFromUrl = useCallback(() => {
+    const params = new URLSearchParams(window.location.search);
+    const pointId = params.get("punt");
+    const point = pointId ? POIS.find((candidate) => candidate.id === pointId) ?? null : null;
+    if (point) {
+      setSelected(point);
+      setWelcome(false);
+      return;
+    }
+    setSelected(null);
+    setWelcome(params.get("guia") === "benvinguda");
+  }, []);
+
+  useEffect(() => {
+    const initialSync = window.requestAnimationFrame(syncModalFromUrl);
+    window.addEventListener("popstate", syncModalFromUrl);
+    return () => {
+      window.cancelAnimationFrame(initialSync);
+      window.removeEventListener("popstate", syncModalFromUrl);
+    };
+  }, [syncModalFromUrl]);
+
+  const openModalUrl = useCallback((kind: "welcome" | "point", point?: Point) => {
+    const url = new URL(window.location.href);
+    const alreadyInModal = url.searchParams.has("punt") || url.searchParams.get("guia") === "benvinguda";
+    url.searchParams.delete("punt");
+    url.searchParams.delete("guia");
+    if (kind === "welcome") url.searchParams.set("guia", "benvinguda");
+    if (kind === "point" && point) url.searchParams.set("punt", point.id);
+    if (alreadyInModal) {
+      window.history.replaceState(window.history.state, "", url);
+    } else {
+      const currentState = typeof window.history.state === "object" && window.history.state !== null ? window.history.state : {};
+      window.history.pushState({ ...currentState, routeModal: true }, "", url);
+    }
+  }, []);
+
+  const openWelcome = useCallback(() => {
+    openModalUrl("welcome");
+    setSelected(null);
+    setWelcome(true);
+  }, [openModalUrl]);
+
+  const openPoint = useCallback((point: Point) => {
+    openModalUrl("point", point);
+    setWelcome(false);
+    setSelected(point);
+  }, [openModalUrl]);
+
+  const closeModal = useCallback(() => {
+    const state = window.history.state as { routeModal?: boolean } | null;
+    if (state?.routeModal) {
+      window.history.back();
+      return;
+    }
+    const url = new URL(window.location.href);
+    url.searchParams.delete("punt");
+    url.searchParams.delete("guia");
+    window.history.replaceState(window.history.state, "", url);
+    setSelected(null);
+    setWelcome(false);
+  }, []);
+
   return <><main className="route-page">
     <header className="route-header"><div className="brand"><span className="eyebrow">{t.route}</span><h1>{t.title}</h1><p>{t.subtitle}</p></div><Language lang={lang} setLang={setLang} label={t.language} /></header>
-    <button className="welcome-card" onClick={() => setWelcome(true)}><span className="welcome-symbol"><img src={assetPath("/icons/welcome-hand.png")} alt="" /></span><span className="welcome-copy"><strong>{t.welcomeTitle}</strong><small>{t.welcomeText}</small></span><span className="welcome-arrow" aria-hidden="true">→</span></button>
+    <button className="welcome-card" onClick={openWelcome}><span className="welcome-symbol"><img src={assetPath("/icons/welcome-hand.png")} alt="" /></span><span className="welcome-copy"><strong>{t.welcomeTitle}</strong><small>{t.welcomeText}</small></span><span className="welcome-arrow" aria-hidden="true">→</span></button>
     <section className="explorer" aria-labelledby="explorer-title">
       <div className="explorer-heading"><div><span className="eyebrow">{POIS.length} {t.results}</span><h2 id="explorer-title">{t.explore}</h2><p>{t.exploreText}</p></div><div className="explorer-actions"><div className="view-switch" aria-label={t.explore}><button aria-pressed={view === "map"} onClick={() => setView("map")}><span className="map-pin-icon" aria-hidden="true" />{t.map}</button><button aria-pressed={view === "list"} onClick={() => setView("list")}><span aria-hidden="true">☷</span>{t.list}</button></div><div className="legend-control"><button className="legend-trigger" aria-expanded={filtersOpen} onClick={() => setFiltersOpen((current) => !current)}>{t.legend}<span className="legend-toggle-icon" aria-hidden="true"><i /><i /></span></button><LegendPanel lang={lang} filters={filters} setFilters={setFilters} open={filtersOpen} onClose={() => setFiltersOpen(false)} /></div></div></div>
-      <div className="explorer-layout"><div className="explorer-content">{view === "map" ? <MapView points={filteredPoints} onSelect={setSelected} lang={lang} onReset={() => setFilters([])} /> : <ListView points={filteredPoints} lang={lang} onSelect={setSelected} onReset={() => setFilters([])} routeStart={routeStart} setRouteStart={setRouteStart} />}</div></div>
+      <div className="explorer-layout"><div className="explorer-content">{view === "map" ? <MapView points={filteredPoints} onSelect={openPoint} lang={lang} onReset={() => setFilters([])} /> : <ListView points={filteredPoints} lang={lang} onSelect={openPoint} onReset={() => setFilters([])} routeStart={routeStart} setRouteStart={setRouteStart} />}</div></div>
       <section className="survey-card" aria-labelledby="survey-title"><div><span className="eyebrow">{t.surveyEyebrow}</span><h2 id="survey-title">{t.surveyTitle}</h2><p>{t.surveyText}</p></div><a href="https://docs.google.com/forms/d/e/1FAIpQLSfh2ueL8W7ycmJGZBmw7l3XSsPRGkOMKTm5cN8n_Ot_WuGilg/viewform?usp=header" target="_blank" rel="noreferrer">{t.surveyAction}<span aria-hidden="true">↗</span></a></section>
     </section>
   </main>
-  {welcome && <ModalShell label={t.introTitle} onClose={() => setWelcome(false)}><WelcomeDetail lang={lang} onBack={() => setWelcome(false)} onLanguage={setLang} /></ModalShell>}
-  {selected && <ModalShell label={selected.name} onClose={() => setSelected(null)}><PointDetail point={selected} lang={lang} onBack={() => setSelected(null)} onLanguage={setLang} onSelect={setSelected} /></ModalShell>}
+  {welcome && <ModalShell label={t.introTitle} onClose={closeModal}><WelcomeDetail lang={lang} onBack={closeModal} onLanguage={setLang} /></ModalShell>}
+  {selected && <ModalShell label={selected.name} onClose={closeModal}><PointDetail point={selected} lang={lang} onBack={closeModal} onLanguage={setLang} onSelect={openPoint} /></ModalShell>}
   </>;
 }
 

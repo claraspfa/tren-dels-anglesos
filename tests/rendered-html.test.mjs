@@ -45,6 +45,11 @@ test("keeps responsive and accessible explorer interactions in source", async ()
   assert.match(page, /function PointDetail/);
   assert.match(page, /aria-pressed=/);
   assert.match(page, /document\.documentElement\.lang/);
+  assert.match(page, /searchParams\.set\("punt", point\.id\)/);
+  assert.match(page, /searchParams\.set\("guia", "benvinguda"\)/);
+  assert.match(page, /addEventListener\("popstate", syncModalFromUrl\)/);
+  assert.match(page, /history\.pushState/);
+  assert.match(page, /history\.replaceState/);
   assert.match(css, /@media \(max-width: 800px\)/);
   assert.match(css, /min-height: 44px/);
   assert.match(css, /prefers-reduced-motion: reduce/);

@@ -29,3 +29,7 @@ El projecte inclou un procés automàtic de publicació que funciona encara que 
 La web quedarà disponible normalment en `https://USUARI.github.io/NOM-DEL-REPOSITORI/`. Si el repositori es diu `USUARI.github.io`, es publicarà directament en `https://USUARI.github.io/`.
 
 No cal modificar `.openai/hosting.json`: la configuració de GitHub Pages és independent i conserva l'opció d'allotjament existent.
+
+## Enllaços directes als modals
+
+Cada punt d'interés es pot obrir directament afegint el seu identificador a l'URL, per exemple `?punt=estacio-gandia`. La guia de benvinguda utilitza `?guia=benvinguda`. En obrir o tancar un modal des de la web, l'adreça i l'historial del navegador s'actualitzen automàticament.
