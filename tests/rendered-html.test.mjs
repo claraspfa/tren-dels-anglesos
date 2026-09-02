@@ -30,6 +30,8 @@ test("server-renders the route explorer", async () => {
   assert.match(html, /Estacions i baixadors/);
   assert.match(html, /Vols seguir la ruta amb Wikiloc/);
   assert.match(html, /283561629/);
+  assert.match(html, /Has trobat alguna incidència/);
+  assert.match(html, /Enviar incidència/);
   assert.doesNotMatch(html, /Building your site|Your site is taking shape/);
 });
 
@@ -52,6 +54,7 @@ test("keeps responsive and accessible explorer interactions in source", async ()
   assert.match(page, /addEventListener\("popstate", syncModalFromUrl\)/);
   assert.match(page, /history\.pushState/);
   assert.match(page, /history\.replaceState/);
+  assert.match(page, /setIncidentSent\(true\)/);
   assert.match(css, /@media \(max-width: 800px\)/);
   assert.match(css, /min-height: 44px/);
   assert.match(css, /prefers-reduced-motion: reduce/);
