@@ -28,6 +28,8 @@ test("server-renders the route explorer", async () => {
   assert.match(html, /aria-pressed="true"/);
   assert.match(html, /class="leaflet-map"/);
   assert.match(html, /Estacions i baixadors/);
+  assert.match(html, /Vols seguir la ruta amb Wikiloc/);
+  assert.match(html, /283561629/);
   assert.doesNotMatch(html, /Building your site|Your site is taking shape/);
 });
 

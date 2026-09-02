@@ -84,6 +84,15 @@ button:focus-visible, .leaflet-marker-icon:focus-visible { outline: 3px solid va
 
 .explorer-layout { display: grid; grid-template-columns: minmax(0, 1fr); gap: 18px; align-items: stretch; }
 .explorer-content { min-width: 0; }
+.wikiloc-card { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; align-items: center; gap: 20px; margin-top: 18px; padding: 20px 22px; border: 1px solid var(--line); border-left: 5px solid var(--rust); border-radius: 16px; background: var(--card); box-shadow: 0 9px 28px rgba(32,40,38,.08); }
+.wikiloc-marker { position: relative; display: grid; place-items: center; width: 48px; height: 48px; transform: rotate(-45deg); border-radius: 50% 50% 50% 0; background: var(--rust); color: white; }
+.wikiloc-marker i { width: 14px; height: 14px; border: 4px solid white; border-radius: 50%; }
+.wikiloc-card h2 { margin: 4px 0 4px; font-family: Georgia, serif; font-size: clamp(1.35rem, 2.2vw, 1.8rem); font-weight: 500; line-height: 1.1; }
+.wikiloc-card p { margin: 0; color: var(--ink-soft); font-size: .88rem; line-height: 1.5; }
+.wikiloc-card a { display: inline-flex; align-items: center; justify-content: center; gap: 10px; min-height: 48px; padding: 0 17px; border-radius: 11px; background: var(--ink); color: white; text-decoration: none; font-size: .8rem; font-weight: 800; transition: transform .18s ease, background .18s ease, box-shadow .18s ease; }
+.wikiloc-card a:hover { transform: translateY(-2px); background: var(--green); box-shadow: 0 8px 20px rgba(32,40,38,.2); }
+.wikiloc-card a:focus-visible { outline: 3px solid var(--brass); outline-offset: 3px; }
+.wikiloc-card a span { color: #e0c179; font-size: 1.1rem; }
 .survey-card { display: flex; align-items: center; justify-content: space-between; gap: 36px; margin-top: 28px; padding: 30px 34px; overflow: hidden; border-radius: 20px; background: linear-gradient(135deg, var(--ink), var(--green)); color: white; box-shadow: var(--shadow); }
 .survey-card > div { max-width: 720px; }
 .survey-card .eyebrow { color: #e0c179; }
@@ -218,6 +227,7 @@ button:focus-visible, .leaflet-marker-icon:focus-visible { outline: 3px solid va
   .explorer-heading { display: grid; gap: 18px; align-items: start; }.explorer-heading h2 { font-size: 1.95rem; }.explorer-heading p { max-width: 320px; font-size: .9rem; line-height: 1.45; }
   .explorer-actions { justify-content: space-between; }.view-switch { flex: 1; }.view-switch button { flex: 1; justify-content: center; padding: 0 12px; }
   .explorer-layout { grid-template-columns: 1fr; }
+  .wikiloc-card { grid-template-columns: auto 1fr; gap: 16px; padding: 20px; }.wikiloc-card a { grid-column: 1 / -1; width: 100%; }
   .survey-card { display: grid; gap: 22px; padding: 25px 22px; border-radius: 16px; }.survey-card a { width: 100%; }
   .legend-panel { position: fixed; z-index: 1600; top: 50%; right: auto; bottom: auto; left: 50%; width: min(420px, calc(100% - 32px)); max-height: min(82vh, 670px); overflow-y: auto; padding: 22px 18px; border: 0; border-radius: 20px; transform: translate(-50%, -50%) scale(.97); opacity: 0; transition: transform .18s ease, opacity .18s ease; }
   .legend-panel.is-open { display: block; transform: translate(-50%, -50%) scale(1); opacity: 1; }
@@ -242,6 +252,7 @@ button:focus-visible, .leaflet-marker-icon:focus-visible { outline: 3px solid va
   .language-trigger { min-width: 118px; }
   .welcome-symbol { width: 42px; height: 42px; }.welcome-copy small { display: none; }
   .explorer-actions { align-items: stretch; }.legend-trigger { min-height: 54px; padding: 0 13px; }
+  .wikiloc-card { grid-template-columns: 1fr; }.wikiloc-marker { width: 42px; height: 42px; }.wikiloc-card a { grid-column: auto; }
   .map-stage { height: 64vh; min-height: 515px; }
   .list-origin { display: grid; gap: 8px; padding: 10px; }.list-origin-label { padding-left: 2px; }.origin-switch button { font-size: .7rem; }
   .point-card { grid-template-columns: 105px 1fr; }
