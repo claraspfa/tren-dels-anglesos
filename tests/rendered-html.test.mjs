@@ -55,6 +55,9 @@ test("keeps responsive and accessible explorer interactions in source", async ()
   assert.match(page, /history\.pushState/);
   assert.match(page, /history\.replaceState/);
   assert.match(page, /setIncidentSent\(true\)/);
+  assert.match(page, /audioByGuide/);
+  assert.match(page, /\/audio\/benvinguda\.m4a/);
+  assert.match(page, /<audio controls preload="metadata"/);
   assert.match(page, /Pont de Tancaes/);
   assert.match(page, /Dipòsit de locomotores d'Alcoi/);
   assert.match(page, /pont-barranc-morata\.jpg/);
